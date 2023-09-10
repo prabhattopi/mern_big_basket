@@ -7,10 +7,12 @@ import { FiShoppingBag } from "react-icons/fi"
 import { AiOutlineCaretDown } from "react-icons/ai"
 import { BiSolidUpArrow } from "react-icons/bi"
 import Login from "./Login";
+import useAuth from "../hooks/useAuth";
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [catarrow, setCatIsArrow] = useState(false)
     const [arrow, setIsArrow] = useState(false)
-    const user = true
+    const { user, logout } = useAuth()
 
     // const { logout, user } = useAuth()
 
@@ -20,12 +22,19 @@ const Navbar = () => {
     };
 
 
-    const handleLogout = () => {
-        // logout()
+    const handleLogout = async () => {
+        await logout()
     }
 
-    const handleDropArrow = () => {
-        setIsArrow(!arrow)
+    const handleDropArrow = (id) => {
+        if (id == "category") {
+            setCatIsArrow(!catarrow)
+        }
+        else {
+
+            setIsArrow(!arrow)
+        }
+
     }
     return (
         <nav className="bg-gray-800 sticky top-0 z-50 text-white">
@@ -48,8 +57,8 @@ const Navbar = () => {
                                 {true ? (
                                     <AiOutlineSearch size={20} className="" />
                                 ) : (
-                                        <RxCross2 size={20} />
-                                    )}
+                                    <RxCross2 size={20} />
+                                )}
                             </button>
                         </div>
                     </div>
@@ -57,32 +66,39 @@ const Navbar = () => {
                         <div className="ml-10 flex items-center space-x-4">
 
                             <div>
-                                <button onClick={handleDropArrow} className="bg-gray-400 rounded-lg h-[2rem] px-2 py-2 flex justify-center items-center">
+                                <button onClick={() => handleDropArrow("category")} className="bg-gray-400 rounded-lg h-[2rem] px-2 py-2 flex justify-center items-center">
                                     <p className="font-bold w-24">Category</p>
-                                    {!arrow ? (<AiOutlineCaretDown size={20} />) : (<BiSolidUpArrow size={20} />)}
+                                    {!catarrow ? (<AiOutlineCaretDown size={20} />) : (<BiSolidUpArrow size={20} />)}
 
                                 </button>
                             </div>
 
                             <div>
                                 {
-                                    user ? (<Login />) : (
-                                        <button className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium" onClick={handleLogout}>
-                                            <span>Logout</span>
+                                    !user ? (<Login />) : (
+                                        <div className="relative ">
+                                            <button onClick={() => handleDropArrow("")} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                                                {user.email}
+                                                {!arrow ? (<AiOutlineCaretDown size={20} />) : (<BiSolidUpArrow size={20} />)}
+                                            </button>
 
-                                        </button>
+                                            {arrow && <button className="z-10 absolute top-12 left-0 text-white bg-black px-3 py-2 rounded-md text-sm font-medium" onClick={handleLogout}>logout</button>}
+                                        </div>
 
                                     )
                                 }
 
                             </div>
+                            {
+                                user && <div className="relative">
+                                    <FiShoppingBag size={30} className="text-white" />
+                                    <div className="font-bold flex justify-center items-center absolute top-4 left-3 rounded-full text-red-500 bg-white w-6 h-6 px-2 py-2">
+                                        0
+                                    </div>
+                                </div>
+                            }
 
-                            <div className="relative">
-                                <FiShoppingBag size={30} className="text-white" />
-                                <div className="font-bold flex justify-center items-center absolute top-4 left-3 rounded-full text-red-500 bg-white w-6 h-6 px-2 py-2">
-                                    0
-                            </div>
-                            </div>
+
 
                         </div>
                     </div>
@@ -104,16 +120,16 @@ const Navbar = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
                                 </svg>
                             ) : (
-                                    <svg
-                                        className="block h-6 w-6"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                )}
+                                <svg
+                                    className="block h-6 w-6"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            )}
                         </button>
                     </div>
                 </div>
@@ -124,10 +140,15 @@ const Navbar = () => {
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                         <div className="flex  mb-8 mt-4 items-center justify-around">
                             {
-                                user ? (<Login />) : (
-                                    <button className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium" onClick={handleLogout}>
-                                        Logout
-                                    </button>
+                                !user ? (<Login />) : (
+                                    <div className="relative ">
+                                        <button onClick={() => handleDropArrow("")} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                                            {user.email}
+                                            {!arrow ? (<AiOutlineCaretDown size={20} />) : (<BiSolidUpArrow size={20} />)}
+                                        </button>
+
+                                        {arrow && <button className="z-10 absolute top-12 left-0 text-white bg-black px-3 py-2 rounded-md text-sm font-medium" onClick={handleLogout}>logout</button>}
+                                    </div>
 
                                 )
                             }
@@ -137,17 +158,19 @@ const Navbar = () => {
 
 
 
-                            <div className="relative text-gray-300 hover:bg-gray-700 hover:text-white ml-5">
+                            {user && <div className="relative text-gray-300 hover:bg-gray-700 hover:text-white ml-5">
                                 <FiShoppingBag size={30} className="text-white" />
                                 <div className="font-bold flex justify-center items-center absolute top-4 left-3 rounded-full text-red-500 bg-white w-6 h-6 px-2 py-2">
                                     0
+                                </div>
+
                             </div>
-                            </div>
+                            }
 
                         </div>
                         <div className="text-white font-bold hover:text-white block">
                             Select Categories
-                            </div>
+                        </div>
                         <div onClick={() => setIsMenuOpen(!isMenuOpen)} className="flex flex-col gap-4 
                         max-h-[calc(100dvh-162px)] overflow-auto pb-8">
 
