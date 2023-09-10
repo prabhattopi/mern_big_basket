@@ -21,6 +21,7 @@ const AuthProvider = ({ children }) => {
             autoClose: 500, // Auto-close the toast after 3000 milliseconds (3 seconds)
             hideProgressBar: true, // Hide the progress bar
           });
+         
           setUser(response.data);
           setIsLoading(false);
         }
