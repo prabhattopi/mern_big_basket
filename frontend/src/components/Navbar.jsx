@@ -8,13 +8,15 @@ import { AiOutlineCaretDown } from "react-icons/ai"
 import { BiSolidUpArrow } from "react-icons/bi"
 import Login from "./Login";
 import useAuth from "../hooks/useAuth";
+import useItem from "../hooks/useItem";
+import CategorModla from "./CategorModla";
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [catarrow, setCatIsArrow] = useState(false)
     const [arrow, setIsArrow] = useState(false)
     const { user, logout } = useAuth()
 
-    // const { logout, user } = useAuth()
+    const { state} = useItem()
 
 
     const toggleMenu = () => {
@@ -63,14 +65,19 @@ const Navbar = () => {
                         </div>
                     </div>
                     <div className="hidden md:block">
-                        <div className="ml-10 flex items-center space-x-4">
+                        <div className="ml-10 flex items-center space-x-4 relative">
 
                             <div>
                                 <button onClick={() => handleDropArrow("category")} className="bg-gray-400 rounded-lg h-[2rem] px-2 py-2 flex justify-center items-center">
                                     <p className="font-bold w-24">Category</p>
-                                    {!catarrow ? (<AiOutlineCaretDown size={20} />) : (<BiSolidUpArrow size={20} />)}
+                                    {catarrow ? (<AiOutlineCaretDown size={20} />) : (<BiSolidUpArrow size={20} />)}
 
                                 </button>
+                                {
+                                    !catarrow && <CategorModla/>
+
+                                }
+                        
                             </div>
 
                             <div>
@@ -93,7 +100,7 @@ const Navbar = () => {
                                 user && <div className="relative">
                                     <FiShoppingBag size={30} className="text-white" />
                                     <div className="font-bold flex justify-center items-center absolute top-4 left-3 rounded-full text-red-500 bg-white w-6 h-6 px-2 py-2">
-                                        0
+                                        {state.cartItem.length}
                                     </div>
                                 </div>
                             }
@@ -161,7 +168,7 @@ const Navbar = () => {
                             {user && <div className="relative text-gray-300 hover:bg-gray-700 hover:text-white ml-5">
                                 <FiShoppingBag size={30} className="text-white" />
                                 <div className="font-bold flex justify-center items-center absolute top-4 left-3 rounded-full text-red-500 bg-white w-6 h-6 px-2 py-2">
-                                    0
+                                {state.cartItem.length}
                                 </div>
 
                             </div>
