@@ -6,18 +6,16 @@ import User from '../models/userModel.js';
 // @route   post /api/items
 // @access  Private
 const postCartItem = asyncHandler(async (req, res) => {
-    const {title,img,discount,price,category} = req.body;
+    
+
    
     const user = await Cart.create({
-        title,
-        img,
-        discount,
-        price,
-        category,
+       ...req.body.item,
         users:req.user._id
     });
   
     if (user) {
+      console.log(user)
       res.status(201).json({
        message:"Item added successfully",
        data:user
@@ -34,7 +32,9 @@ const postCartItem = asyncHandler(async (req, res) => {
 // @route   get /api/items
 // @access  Private
 const getCartItem = asyncHandler(async (req, res) => {
-    const CartItems = await Cart.find({users:req.user._id});
+    const CartItems = await Cart.find({users:req.user._id.toString()});
+
+
   
     if (CartItems) {
       res.status(200).json({
@@ -53,11 +53,12 @@ const getCartItem = asyncHandler(async (req, res) => {
 // @access  Private
 
 const deleteCartItem = asyncHandler(async (req, res) => {
-    const CartItems = await Cart.findByIdAndDelete(req.body.id);
+    const CartItems = await Cart.findByIdAndDelete(req.params.id);
   
     if (CartItems) {
       res.status(200).json({
          message:"Item deleted Successfully",
+         id:req.params.id
       });
     } else {
       res.status(400);
