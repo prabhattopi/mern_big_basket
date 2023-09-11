@@ -11,7 +11,7 @@ const Card = ({ data }) => {
     return (
         <div className="flex flex-wrap gap-4 mt-2 px-8 py-2">
             {
-                data?.slice(0, 5).map((item) => (
+                data?.map((item) => (
                     <div key={item._id} className="flex flex-col rounded-lg shadow-xl w-[13rem] h-[14rem] relative">
                        
                              {state.cartItem?.some((rec) => rec._id.toString() === item._id.toString()) ? (

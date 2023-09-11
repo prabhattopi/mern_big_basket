@@ -5,7 +5,6 @@ export const AuthContext = createContext()
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  
 
 
   useEffect(() => {
@@ -94,6 +93,7 @@ console.log(user)
       });
     }
   }
+
   const logout = async() => {
     try {
         const response = await api.post("/users/logout");
@@ -106,6 +106,7 @@ console.log(user)
           hideProgressBar: false, // Hide the progress bar
         });
         setUser(null)
+
    
         // Handle the response here, such as updating state or displaying a messag
         // navigate("/")
@@ -172,6 +173,7 @@ console.log(user)
     // forgetPassword,
     // resetPassword
   }
+
   return (
     <AuthContext.Provider value={value}>
     {isLoading ? (<div className="flex items-center justify-center h-screen">

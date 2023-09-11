@@ -10,13 +10,19 @@ import Login from "./Login";
 import useAuth from "../hooks/useAuth";
 import useItem from "../hooks/useItem";
 import CategorModla from "./CategorModla";
+import SearchBox from "./SearchBox";
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [catarrow, setCatIsArrow] = useState(false)
+    const [searchValue,setSearchValue]=useState("")
     const [arrow, setIsArrow] = useState(false)
     const { user, logout } = useAuth()
 
-    const { state} = useItem()
+    const { state,selectedCategoryItem,searchItemArray} = useItem()
+    const categoryList=state.items.reduce((array,e)=>{
+        array.push(e.category)
+        return array
+    },[])
 
 
     const toggleMenu = () => {
@@ -48,7 +54,10 @@ const Navbar = () => {
                         </div>
 
                         <div className="flex-1 relative">
-                            <input type="text" placeholder="Search" className="text-black h-[3rem] w-full px-4 py-4 outline-none rounded-md" />
+                            <input value={searchValue} type="text" placeholder="Search" onChange={(e)=>{
+                                searchItemArray(e.target.value)
+                                setSearchValue(e.target.value)
+                            }} className="text-black h-[3rem] w-full px-4 py-4 outline-none rounded-md" />
                             <button
 
                                 //   disabled={!state.searchQuery}
@@ -62,6 +71,7 @@ const Navbar = () => {
                                     <RxCross2 size={20} />
                                 )}
                             </button>
+                            {searchValue&&<SearchBox/>}
                         </div>
                     </div>
                     <div className="hidden md:block">
@@ -70,11 +80,11 @@ const Navbar = () => {
                             <div>
                                 <button onClick={() => handleDropArrow("category")} className="bg-gray-400 rounded-lg h-[2rem] px-2 py-2 flex justify-center items-center">
                                     <p className="font-bold w-24">Category</p>
-                                    {catarrow ? (<AiOutlineCaretDown size={20} />) : (<BiSolidUpArrow size={20} />)}
+                                    {!catarrow ? (<AiOutlineCaretDown size={20} />) : (<BiSolidUpArrow size={20} />)}
 
                                 </button>
                                 {
-                                    !catarrow && <CategorModla/>
+                                    catarrow && <CategorModla catarrow={catarrow} setCatIsArrow={setCatIsArrow}/>
 
                                 }
                         
@@ -180,17 +190,18 @@ const Navbar = () => {
                         </div>
                         <div onClick={() => setIsMenuOpen(!isMenuOpen)} className="flex flex-col gap-4 
                         max-h-[calc(100dvh-162px)] overflow-auto pb-8">
+                            <div onClick={()=>selectedCategoryItem("All")} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">All</div>
+                            {
+                                [...new Set(categoryList)].map(e=>(
+                                      <div onClick={()=>selectedCategoryItem(e)} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                                {e}
+                            </div>
+                                    
+                                ))
+                            }
 
-                            <div className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                                Fruits & Vegetables
-                            </div>
-                            <div className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                                Fruits & Vegetables
-                            </div>
-                            <div className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                                Fruits & Vegetables
-                            </div>
-
+                          
+                           
 
                         </div>
 

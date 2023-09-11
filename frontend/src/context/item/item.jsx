@@ -1,6 +1,7 @@
 import { createContext, useEffect, useReducer } from "react"
 import { toast } from "react-toastify"
 import api from "../../api"
+import useAuth from "../../hooks/useAuth"
 // import useAuth from "../../hooks/useAuth"
 
 export const ItemContext = createContext()
@@ -8,6 +9,8 @@ const initialState = {
     loading: false,
     items: [],
     cartItem: [],
+    selectCat:[],
+    searchItem:[]
 
 }
 
@@ -27,6 +30,12 @@ const reducer = (state, action) => {
             return { ...state, singleRecipe: {} }
         case "SET_SAVED_RECIPE":
             return { ...state, savedRecipe: action.payload }
+        case "SET_CATEGORY_PAGE":
+            return {...state,selectCat:action.payload}   
+        case "SET_SEARCH_DATA":
+            return {...state,searchItem:action.payload}     
+        case "RESET_STATE":
+            return {...state,state:{}}
         default:
             return state
     }
@@ -36,55 +45,7 @@ const reducer = (state, action) => {
 export const ItemProvider = ({ children }) => {
 
     const [state, dispatch] = useReducer(reducer, initialState)
-    // const { token } = useAuth()
-
-    // const getItem = async () => {
-    //     try {
-
-    //         dispatch({ type: 'SET_LOADING', payload: true });
-
-    //         const response = await api.get('/items');
-    //         if (response.status == "200") {
-    //             console.log("hello")
-    //             dispatch({ type: 'SET_ITEM', payload: response.data.item});
-    //         }
-
-
-    //     } catch (error) {
-    //         toast.error('Failed to create Post', {
-    //             position: toast.POSITION.TOP_RIGHT,
-    //             autoClose: 3000,
-    //             hideProgressBar: false,
-    //         });
-    //     }
-    //     dispatch({ type: 'SET_LOADING', payload: false });
-
-
-    // }
-
-//     const singleRecipeInformation = async (id) => {
-//         try {
-//             dispatch({ type: 'SET_LOADING', payload: true });
-//             let response = await api.get(`/items/single/${id}`, {
-//                 headers: {
-//                     Authorization: `Bearer ${localStorage.getItem('recipe_walle')}`,
-//                 },
-//             })
-
-//             dispatch({ type: "SET_SINGLE", payload: response.data })
-//         }
-//         catch (err) {
-//             toast.error('Failed to create Post', {
-//                 position: toast.POSITION.TOP_RIGHT,
-//                 autoClose: 3000,
-//                 hideProgressBar: false,
-//             });
-//         }
-
-//         dispatch({ type: 'SET_LOADING', payload: false });
-
-
-//     }
+    
 
     const postCartItem= async (data) => {
         try {
@@ -98,7 +59,7 @@ export const ItemProvider = ({ children }) => {
             });
         }
         catch (err) {
-            toast.error('Failed to add Item', {
+            toast.error('Failed to add Item Please Login', {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 3000,
                 hideProgressBar: false,
@@ -135,6 +96,30 @@ export const ItemProvider = ({ children }) => {
 
 
   }
+  const selectedCategoryItem=(cat)=>{
+    if(cat=="All"){
+        dispatch({type:"SET_CATEGORY_PAGE",payload:[]})
+        return
+    }
+    const catItem=state.items.filter(e=>e.category==cat)
+    dispatch({type:"SET_CATEGORY_PAGE",payload:catItem})
+  }
+
+  const searchItemArray=async(value)=>{
+    try{
+    let response=await api.get(`/items/search?title=${value}`)
+    console.log(response)
+    dispatch({type:"SET_SEARCH_DATA",payload:response.data.item})
+
+
+  }
+  catch(err){
+    console.log(err)
+  }
+}
+
+
+  const {user}=useAuth()
     useEffect(() => {
         let isCurrent = true
         const getData = async () => {
@@ -154,12 +139,18 @@ export const ItemProvider = ({ children }) => {
 
         }
         if (isCurrent) {
-            getData()
+            if(!user){
+                dispatch({type:"RESET_STATE"})
+            }
+          
+                getData()
+            
+          
         }
         return () => {
             isCurrent = false
         }
-    }, [])
+    }, [user?.email])
 
 
     useEffect(() => {
@@ -181,19 +172,24 @@ export const ItemProvider = ({ children }) => {
 
         }
         if (isCurrent) {
-            getData()
+            if(user){
+                getData()
+            }
+      
         }
         return () => {
             isCurrent = false
         }
-    }, [])
+    }, [user?.email])
 
-
+ 
     const value = {
         state,
         dispatch,
        deleteCartItem,
-       postCartItem
+       postCartItem,
+       selectedCategoryItem,
+       searchItemArray
     }
     return (
         <ItemContext.Provider value={value}>
