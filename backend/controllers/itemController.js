@@ -21,6 +21,26 @@ const getItem = asyncHandler(async (req, res) => {
   }
 });
 
+const searchItem = asyncHandler(async (req, res) => {
+  let pipeline=[
+    {
+      $search: {
+        index: "user",
+        autocomplete: {
+          query: req.query.title,
+          path: "title",
+          tokenOrder: "sequential",
+        },
+      },
+    },
+  ]
+
+
+  const searchItem=await Item.aggregate(pipeline)
+  res.json({item:searchItem})
+
+});
+
 // // @desc    Register a new user
 // // @route   POST /api/users
 // // @access  Public
@@ -105,5 +125,6 @@ const getItem = asyncHandler(async (req, res) => {
 // //   }
 // // });
 export {
-getItem
+getItem,
+searchItem
 };
