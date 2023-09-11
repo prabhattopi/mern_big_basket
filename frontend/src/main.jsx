@@ -6,12 +6,16 @@ import './index.css'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AuthProvider from './context/auth/auth';
+import { ItemProvider } from './context/item/item.jsx';
 ReactDOM.createRoot(document.getElementById('root')).render(
     <AuthProvider>
-   <ToastContainer />
+        <ItemProvider>
+        <ToastContainer />
        <App />
 
+        </ItemProvider>
     </AuthProvider>
+
 
 
  

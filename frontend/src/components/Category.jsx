@@ -1,8 +1,14 @@
 import React from 'react'
+import Card from './Card'
 
-const Category = () => {
+const Category = ({title,data}) => {
   return (
-    <div>Category</div>
+    <div className="flex flex-col gap-2 mt-2 px-4 py-4">
+        {/* title */}
+        <div className="font-bold text-2xl">{title}</div>
+        {/* Cards */}
+        <Card data={data}/>
+    </div>
   )
 }
 

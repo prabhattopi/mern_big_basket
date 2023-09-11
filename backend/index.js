@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import userRoutes from './routes/userRoutes.js';
 import itemRoutes from './routes/itemRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';
 
 const port = process.env.PORT || 5000;
 
@@ -23,6 +24,7 @@ app.use(cookieParser());
 
 app.use('/api/users', userRoutes);
 app.use('/api/items', itemRoutes);
+app.use('/api/carts', cartRoutes);
 
 // if (process.env.NODE_ENV === 'production') {
 //   const __dirname = path.resolve();
